@@ -1,4 +1,5 @@
 import { ENV } from "./env";
+import { OpenAI } from "openai";
 
 export type Role = "system" | "user" | "assistant" | "tool" | "function";
 
@@ -201,14 +202,11 @@ const normalizeToolChoice = (
   return toolChoice;
 };
 
-const resolveApiUrl = () =>
-  ENV.forgeApiUrl && ENV.forgeApiUrl.trim().length > 0
-    ? `${ENV.forgeApiUrl.replace(/\/$/, "")}/v1/chat/completions`
-    : "https://forge.manus.im/v1/chat/completions";
+const resolveApiUrl = () => "https://integrate.api.nvidia.com/v1";
 
 const assertApiKey = () => {
-  if (!ENV.forgeApiKey) {
-    throw new Error("OPENAI_API_KEY is not configured");
+  if (!ENV.nvidiaApiKey) {
+    throw new Error("NVIDIA_API_KEY is not configured");
   }
 };
 
@@ -255,35 +253,12 @@ const normalizeResponseFormat = ({
 export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
   assertApiKey();
 
-  const {
-    messages,
-    tools,
-    toolChoice,
-    tool_choice,
-    outputSchema,
-    output_schema,
-    responseFormat,
-    response_format,
-  } = params;
+  const { messages, responseFormat, response_format, outputSchema, output_schema } = params;
 
-  const payload: Record<string, unknown> = {
-    model: "gemini-2.5-flash",
-    messages: messages.map(normalizeMessage),
-  };
-
-  if (tools && tools.length > 0) {
-    payload.tools = tools;
-  }
-
-  const normalizedToolChoice = normalizeToolChoice(toolChoice || tool_choice, tools);
-  if (normalizedToolChoice) {
-    payload.tool_choice = normalizedToolChoice;
-  }
-
-  payload.max_tokens = 32768;
-  payload.thinking = {
-    budget_tokens: 128,
-  };
+  const client = new OpenAI({
+    baseURL: resolveApiUrl(),
+    apiKey: ENV.nvidiaApiKey,
+  });
 
   const normalizedResponseFormat = normalizeResponseFormat({
     responseFormat,
@@ -292,23 +267,47 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     output_schema,
   });
 
+  // Build request payload
+  const requestPayload: any = {
+    model: "meta/llama-3.3-70b-instruct",
+    messages: messages.map(normalizeMessage),
+    temperature: 0.2,
+    top_p: 0.7,
+    max_tokens: 4096,
+  };
+
+  // Add response format if specified
   if (normalizedResponseFormat) {
-    payload.response_format = normalizedResponseFormat;
+    if (normalizedResponseFormat.type === "json_object" || normalizedResponseFormat.type === "json_schema") {
+      requestPayload.response_format = { type: "json_object" };
+    }
   }
 
-  const response = await fetch(resolveApiUrl(), {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      authorization: `Bearer ${ENV.forgeApiKey}`,
-    },
-    body: JSON.stringify(payload),
-  });
+  const response = await client.chat.completions.create(requestPayload);
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`LLM invoke failed: ${response.status} ${response.statusText} – ${errorText}`);
-  }
+  // Transform response to match InvokeResult format
+  const content = response.choices[0]?.message?.content || "";
 
-  return (await response.json()) as InvokeResult;
+  return {
+    id: response.id,
+    created: response.created,
+    model: response.model,
+    choices: [
+      {
+        index: 0,
+        message: {
+          role: "assistant",
+          content,
+        },
+        finish_reason: response.choices[0]?.finish_reason || "stop",
+      },
+    ],
+    usage: response.usage
+      ? {
+          prompt_tokens: response.usage.prompt_tokens,
+          completion_tokens: response.usage.completion_tokens,
+          total_tokens: response.usage.total_tokens,
+        }
+      : undefined,
+  };
 }

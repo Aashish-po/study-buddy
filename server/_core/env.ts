@@ -5,6 +5,9 @@ export const ENV = {
   oAuthServerUrl: process.env.OAUTH_SERVER_URL ?? "",
   ownerOpenId: process.env.OWNER_OPEN_ID ?? "",
   isProduction: process.env.NODE_ENV === "production",
+  // LLM - NVIDIA (Llama 3.3 70B)
+  nvidiaApiKey: process.env.NVIDIA_API_KEY ?? "",
+  // Optional: Legacy Manus Forge API (for image generation, voice transcription)
   forgeApiUrl: process.env.BUILT_IN_FORGE_API_URL ?? "",
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
   // ML Service

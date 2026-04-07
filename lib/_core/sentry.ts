@@ -4,7 +4,6 @@
  */
 
 import * as Sentry from "@sentry/react-native";
-import { sentryTracesPropagationIntegration } from "@sentry/react-native";
 
 export function initSentry() {
   const dsn = process.env.SENTRY_DSN;
@@ -20,11 +19,12 @@ export function initSentry() {
     dsn,
     environment,
     release,
-    tracesSampleRate: environment === "production" ? 0.1 : 1.0, // 10% sampling in production
+    tracesSampleRate: environment === "production" ? 0.1 : 1.0,
     enableNative: true,
     integrations: [
-      sentryTracesPropagationIntegration(),
-      new Sentry.reactNavigationIntegration(),
+      new Sentry.ReactNativeTracing({
+        routingInstrumentation: Sentry.reactNavigationIntegration(),
+      }),
     ],
     beforeSend(event) {
       // Filter out certain errors in development
