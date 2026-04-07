@@ -22,9 +22,7 @@ export function initSentry() {
     tracesSampleRate: environment === "production" ? 0.1 : 1.0,
     enableNative: true,
     integrations: [
-      new Sentry.ReactNativeTracing({
-        routingInstrumentation: Sentry.reactNavigationIntegration(),
-      }),
+      Sentry.reactNavigationIntegration(),
     ],
     beforeSend(event) {
       // Filter out certain errors in development
@@ -40,3 +38,4 @@ export function initSentry() {
 }
 
 export { Sentry };
+

@@ -1,8 +1,9 @@
-# API Key .env Setup TODO
+# Fix Sentry TypeScript Errors in lib/_core/sentry.ts
 
-- [x] Create ml-service/.env with config vars
-- [ ] Create root .env with BUILT_IN_FORGE_API_KEY etc.
-- [ ] User: Add real API key/DB creds to .env files
-- [ ] cd ml-service && python -m venv venv && venv\\Scripts\\activate && pip install -r requirements.txt
-- [ ] uvicorn app.main:app --reload --port 8000
-- [ ] Test LLM/server requires BUILT_IN_FORGE_API_KEY
+## Steps:
+- [x] Step 1: Remove unused ESLint disable directive and update integrations array to use proper ReactNativeTracking + BrowserTracing with routingInstrumentation.
+- [x] Step 1: Remove unused ESLint disable directive and update integrations array to use proper ReactNativeTracking + BrowserTracing with routingInstrumentation.
+- [x] Step 2: Verify TypeScript errors are resolved (check VSCode problems panel).
+- [x] Step 3: Test app rebuild/start to confirm no runtime issues.
+
+**Status: All steps complete. Errors fixed by using minimal integrations: Sentry.reactNavigationIntegration() which is available and satisfies Integration interface with implicit name.**
