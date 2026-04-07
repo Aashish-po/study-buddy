@@ -1,4 +1,11 @@
-import { ScrollView, Text, View, TouchableOpacity, FlatList, Dimensions } from "react-native";
+import {
+  ScrollView,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+  Dimensions,
+} from "react-native";
 import { useState } from "react";
 import { ScreenContainer } from "@/components/screen-container";
 import { IconSymbol } from "@/components/ui/icon-symbol";
@@ -34,11 +41,41 @@ export default function AnalyticsScreen() {
   ];
 
   const topicAnalytics: TopicAnalytic[] = [
-    { name: "Algebra", mastery: 85, timeSpent: 420, sessionsCount: 12, trend: "up" },
-    { name: "Geometry", mastery: 72, timeSpent: 280, sessionsCount: 8, trend: "up" },
-    { name: "Biology", mastery: 68, timeSpent: 240, sessionsCount: 7, trend: "stable" },
-    { name: "Chemistry", mastery: 55, timeSpent: 180, sessionsCount: 5, trend: "down" },
-    { name: "Physics", mastery: 78, timeSpent: 360, sessionsCount: 10, trend: "up" },
+    {
+      name: "Algebra",
+      mastery: 85,
+      timeSpent: 420,
+      sessionsCount: 12,
+      trend: "up",
+    },
+    {
+      name: "Geometry",
+      mastery: 72,
+      timeSpent: 280,
+      sessionsCount: 8,
+      trend: "up",
+    },
+    {
+      name: "Biology",
+      mastery: 68,
+      timeSpent: 240,
+      sessionsCount: 7,
+      trend: "stable",
+    },
+    {
+      name: "Chemistry",
+      mastery: 55,
+      timeSpent: 180,
+      sessionsCount: 5,
+      trend: "down",
+    },
+    {
+      name: "Physics",
+      mastery: 78,
+      timeSpent: 360,
+      sessionsCount: 10,
+      trend: "up",
+    },
   ];
 
   const insights = {
@@ -78,7 +115,9 @@ export default function AnalyticsScreen() {
         <View className="gap-6 px-4 py-4">
           {/* Header */}
           <View className="gap-2">
-            <Text className="text-3xl font-bold text-foreground">Analytics</Text>
+            <Text className="text-3xl font-bold text-foreground">
+              Analytics
+            </Text>
             <Text className="text-base text-muted">Your learning insights</Text>
           </View>
 
@@ -87,16 +126,24 @@ export default function AnalyticsScreen() {
             <View className="flex-row gap-2">
               <View className="flex-1 bg-surface rounded-xl p-4 border border-border">
                 <View className="flex-row items-center justify-between mb-2">
-                  <IconSymbol name="chart.line.uptrend.xyaxis" size={20} color={colors.primary} />
+                  <IconSymbol
+                    name="chart.line.uptrend.xyaxis"
+                    size={20}
+                    color={colors.primary}
+                  />
                 </View>
-                <Text className="text-2xl font-bold text-foreground">{insights.learningVelocity}</Text>
+                <Text className="text-2xl font-bold text-foreground">
+                  {insights.learningVelocity}
+                </Text>
                 <Text className="text-xs text-muted">Topics/Week</Text>
               </View>
               <View className="flex-1 bg-surface rounded-xl p-4 border border-border">
                 <View className="flex-row items-center justify-between mb-2">
                   <IconSymbol name="target" size={20} color={colors.success} />
                 </View>
-                <Text className="text-2xl font-bold text-foreground">{Math.round(insights.averageMastery)}%</Text>
+                <Text className="text-2xl font-bold text-foreground">
+                  {Math.round(insights.averageMastery)}%
+                </Text>
                 <Text className="text-xs text-muted">Avg Mastery</Text>
               </View>
             </View>
@@ -104,7 +151,11 @@ export default function AnalyticsScreen() {
             <View className="flex-row gap-2">
               <View className="flex-1 bg-surface rounded-xl p-4 border border-border">
                 <View className="flex-row items-center justify-between mb-2">
-                  <IconSymbol name="clock.fill" size={20} color={colors.warning} />
+                  <IconSymbol
+                    name="clock.fill"
+                    size={20}
+                    color={colors.warning}
+                  />
                 </View>
                 <Text className="text-2xl font-bold text-foreground">
                   {Math.round(insights.totalTimeSpent / 60)}h
@@ -113,9 +164,15 @@ export default function AnalyticsScreen() {
               </View>
               <View className="flex-1 bg-surface rounded-xl p-4 border border-border">
                 <View className="flex-row items-center justify-between mb-2">
-                  <IconSymbol name="checkmark.circle.fill" size={20} color={colors.primary} />
+                  <IconSymbol
+                    name="checkmark.circle.fill"
+                    size={20}
+                    color={colors.primary}
+                  />
                 </View>
-                <Text className="text-2xl font-bold text-foreground">{insights.predictedExamReadiness}%</Text>
+                <Text className="text-2xl font-bold text-foreground">
+                  {insights.predictedExamReadiness}%
+                </Text>
                 <Text className="text-xs text-muted">Exam Ready</Text>
               </View>
             </View>
@@ -123,7 +180,9 @@ export default function AnalyticsScreen() {
 
           {/* Weekly Activity */}
           <View className="gap-3">
-            <Text className="text-lg font-semibold text-foreground">Weekly Activity</Text>
+            <Text className="text-lg font-semibold text-foreground">
+              Weekly Activity
+            </Text>
             <View className="bg-surface rounded-2xl p-4 border border-border gap-4">
               <View className="flex-row items-end justify-between h-32 gap-2">
                 {dailyMetrics.map((metric, index) => (
@@ -140,7 +199,12 @@ export default function AnalyticsScreen() {
               </View>
               <View className="pt-4 border-t border-border">
                 <Text className="text-xs text-muted text-center">
-                  Average: {Math.round(dailyMetrics.reduce((sum, m) => sum + m.timeSpent, 0) / dailyMetrics.length)} min/day
+                  Average:{" "}
+                  {Math.round(
+                    dailyMetrics.reduce((sum, m) => sum + m.timeSpent, 0) /
+                      dailyMetrics.length,
+                  )}{" "}
+                  min/day
                 </Text>
               </View>
             </View>
@@ -148,7 +212,9 @@ export default function AnalyticsScreen() {
 
           {/* Topic Performance */}
           <View className="gap-3">
-            <Text className="text-lg font-semibold text-foreground">Topic Performance</Text>
+            <Text className="text-lg font-semibold text-foreground">
+              Topic Performance
+            </Text>
 
             <FlatList
               scrollEnabled={false}
@@ -158,20 +224,28 @@ export default function AnalyticsScreen() {
                 <View className="bg-surface rounded-xl p-4 border border-border mb-2">
                   <View className="flex-row items-center justify-between mb-3">
                     <View className="flex-1">
-                      <Text className="text-foreground font-semibold">{item.name}</Text>
+                      <Text className="text-foreground font-semibold">
+                        {item.name}
+                      </Text>
                       <Text className="text-muted text-xs">
-                        {item.sessionsCount} sessions • {Math.round(item.timeSpent / 60)}h
+                        {item.sessionsCount} sessions •{" "}
+                        {Math.round(item.timeSpent / 60)}h
                       </Text>
                     </View>
                     <View className="items-center">
-                      <Text className="text-lg font-bold text-foreground">{item.mastery}%</Text>
+                      <Text className="text-lg font-bold text-foreground">
+                        {item.mastery}%
+                      </Text>
                       <View className="flex-row items-center gap-1 mt-1">
                         <IconSymbol
                           name={getTrendIcon(item.trend) as any}
                           size={14}
                           color={getTrendColor(item.trend)}
                         />
-                        <Text className="text-xs" style={{ color: getTrendColor(item.trend) }}>
+                        <Text
+                          className="text-xs"
+                          style={{ color: getTrendColor(item.trend) }}
+                        >
                           {item.trend}
                         </Text>
                       </View>
@@ -182,7 +256,11 @@ export default function AnalyticsScreen() {
                   <View className="bg-border rounded-full h-2 overflow-hidden">
                     <View
                       className={`h-full rounded-full ${
-                        item.mastery >= 80 ? "bg-success" : item.mastery >= 60 ? "bg-warning" : "bg-error"
+                        item.mastery >= 80
+                          ? "bg-success"
+                          : item.mastery >= 60
+                            ? "bg-warning"
+                            : "bg-error"
                       }`}
                       style={{ width: `${item.mastery}%` }}
                     />
@@ -194,13 +272,21 @@ export default function AnalyticsScreen() {
 
           {/* Recommendations */}
           <View className="gap-3">
-            <Text className="text-lg font-semibold text-foreground">Recommendations</Text>
+            <Text className="text-lg font-semibold text-foreground">
+              Recommendations
+            </Text>
 
             <View className="bg-primary bg-opacity-10 rounded-xl p-4 border border-primary border-opacity-30 gap-2">
               <View className="flex-row items-start gap-2">
-                <IconSymbol name="lightbulb.fill" size={20} color={colors.primary} />
+                <IconSymbol
+                  name="lightbulb.fill"
+                  size={20}
+                  color={colors.primary}
+                />
                 <View className="flex-1">
-                  <Text className="text-primary font-semibold">Focus on Chemistry</Text>
+                  <Text className="text-primary font-semibold">
+                    Focus on Chemistry
+                  </Text>
                   <Text className="text-primary text-opacity-70 text-xs">
                     Your mastery is declining. Increase study frequency.
                   </Text>
@@ -210,11 +296,17 @@ export default function AnalyticsScreen() {
 
             <View className="bg-success bg-opacity-10 rounded-xl p-4 border border-success border-opacity-30 gap-2">
               <View className="flex-row items-start gap-2">
-                <IconSymbol name="checkmark.circle.fill" size={20} color={colors.success} />
+                <IconSymbol
+                  name="checkmark.circle.fill"
+                  size={20}
+                  color={colors.success}
+                />
                 <View className="flex-1">
-                  <Text className="text-success font-semibold">Maintain Momentum</Text>
+                  <Text className="text-success font-semibold">
+                    Maintain Momentum
+                  </Text>
                   <Text className="text-success text-opacity-70 text-xs">
-                    You're on track for exam readiness. Keep up the good work!
+                    You are on track for exam readiness. Keep up the good work!
                   </Text>
                 </View>
               </View>
