@@ -41,15 +41,20 @@ Guidelines:
 - Keep responses concise but comprehensive. Use formatting (bold, lists) for clarity.
 - Never give direct answers to homework. Instead, guide the student to the answer.`;
 
-        const response = await invokeLLM({
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: input.message },
-          ],
-        });
+        try {
+          const response = await invokeLLM({
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: input.message },
+            ],
+          });
 
-        const aiResponse = response.choices[0]?.message?.content || "I couldn't generate a response. Please try again.";
-        return { response: aiResponse };
+          const aiResponse = response.choices[0]?.message?.content || "I couldn't generate a response. Please try again.";
+          return { response: aiResponse };
+        } catch (error) {
+          console.error("[Chat Error]", error);
+          throw new Error(`Failed to generate tutor response: ${error instanceof Error ? error.message : String(error)}`);
+        }
       }),
   }),
 
@@ -78,25 +83,33 @@ Make sure:
 - Content is accurate and educational
 - Difficulty matches the requested level`;
 
-        const response = await invokeLLM({
-          messages: [
-            { role: "system", content: "You are an expert educator creating study flashcards. Return only valid JSON." },
-            { role: "user", content: prompt },
-          ],
-          response_format: {
-            type: "json_object",
-          },
-        });
-
-        const content = response.choices[0]?.message?.content;
-        let flashcards = [];
-
         try {
-          const contentStr = typeof content === 'string' ? content : JSON.stringify(content);
-          const parsed = JSON.parse(contentStr || "[]");
-          flashcards = Array.isArray(parsed) ? parsed : parsed.flashcards || [];
-        } catch {
-          flashcards = [];
+          const response = await invokeLLM({
+            messages: [
+              { role: "system", content: "You are an expert educator creating study flashcards. Return only valid JSON." },
+              { role: "user", content: prompt },
+            ],
+            response_format: {
+              type: "json_object",
+            },
+          });
+
+          const content = response.choices[0]?.message?.content;
+          let flashcards = [];
+
+          try {
+            const contentStr = typeof content === 'string' ? content : JSON.stringify(content);
+            const parsed = JSON.parse(contentStr || "[]");
+            flashcards = Array.isArray(parsed) ? parsed : parsed.flashcards || [];
+          } catch {
+            console.warn("[Flashcard Parse Error] Could not parse response as JSON");
+            flashcards = [];
+          }
+
+          return { flashcards };
+        } catch (error) {
+          console.error("[Flashcard Generation Error]", error);
+          throw new Error(`Failed to generate flashcards: ${error instanceof Error ? error.message : String(error)}`);
         }
 
         return { flashcards };

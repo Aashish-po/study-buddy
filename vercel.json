@@ -1,0 +1,45 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".expo/web",
+  "framework": "expo",
+  "env": {
+    "EXPO_USE_METRO_WORKSPACE_ROOT": "1",
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "api/**/*.ts": {
+      "maxDuration": 60,
+      "memory": 3008,
+      "runtime": "nodejs18.x"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/trpc/:path*",
+      "destination": "/api/trpc.ts"
+    },
+    {
+      "source": "/api/health",
+      "destination": "/api/health.ts"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "/api/:path*.ts"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/:path*",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        }
+      ]
+    }
+  ]
+}
