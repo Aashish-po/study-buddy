@@ -1,7 +1,6 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": ".expo/web",
-  "framework": "expo",
   "env": {
     "EXPO_USE_METRO_WORKSPACE_ROOT": "1",
     "NODE_ENV": "production"
