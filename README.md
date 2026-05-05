@@ -1,602 +1,437 @@
-# 📚 StudyBuddy AI - Intelligent Learning Companion
+# StudyBuddy AI
 
-**Production-Ready AI-Powered Study Platform** for Mobile & Web
+> Intelligent learning companion powered by open-source LLMs and machine learning. Personalized study recommendations, adaptive learning paths, and AI-powered content generation.
 
-Version: 1.0.0 | Last Updated: April 7, 2026
-
----
+![GitHub](https://img.shields.io/badge/license-MIT-blue)
+![Status](https://img.shields.io/badge/status-active-brightgreen)
+![Python](https://img.shields.io/badge/python-3.9%2B-blue)
+![Node.js](https://img.shields.io/badge/node-18%2B-green)
 
 ## 🎯 Overview
 
-**StudyBuddy AI** is a full-stack educational application that combines:
-- 🤖 **AI Tutoring** - Real-time chat with intelligent tutor
-- 📊 **Smart Learning Analytics** - ML-driven insights on knowledge gaps
-- 🎓 **Personalized Study Plans** - Adaptive exam preparation scheduling
-- 💾 **Study Aids** - Auto-generated flashcards, quizzes, summaries
-- 📈 **Progress Tracking** - Real-time performance monitoring
+StudyBuddy AI is a full-stack learning platform that combines React Native frontend, Express.js backend, and a FastAPI ML microservice to deliver personalized educational experiences. Leverages NVIDIA NIM for efficient open-source LLM inference.
 
-Built with **React Native**, **Express**, **tRPC**, **MySQL**, and **Python ML**.
+### Key Features
 
----
+🤖 **AI-Powered Learning**
+- Adaptive learning recommendations based on performance analytics
+- Multi-format study material support (PDFs, images, videos, text)
+- Intelligent Q&A generation from any subject matter
+- Real-time tutoring and concept explanation
 
-## 🚀 Quick Start
+📊 **Analytics & Progress Tracking**
+- Personal learning dashboard with progress visualization
+- Spaced repetition scheduling for optimal retention
+- Performance trends and learning analytics
+- Study time tracking and goal management
+
+🎯 **Personalized Learning Paths**
+- Dynamic curriculum adaptation based on proficiency
+- Skill gap identification and targeted practice
+- Custom quiz generation based on study history
+- Prerequisite tracking and learning sequence optimization
+
+⚡ **High-Performance Infrastructure**
+- Open-source LLM integration (Llama 3.3 70B via NVIDIA NIM)
+- Efficient inference with GPU acceleration
+- Real-time API response optimization
+- Scalable microservice architecture
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Framework**: React Native + Expo
+- **State Management**: Redux Toolkit + RTK Query
+- **Styling**: NativeWind (Tailwind for React Native)
+- **Navigation**: React Navigation v6
+
+### Backend
+- **Runtime**: Node.js 18+
+- **Framework**: Express.js with TypeScript
+- **ORM**: Drizzle ORM with MySQL
+- **RPC**: tRPC for type-safe APIs
+- **Database**: MySQL 8.0+
+- **Authentication**: JWT + OAuth 2.0
+
+### ML Microservice
+- **Framework**: FastAPI (Python 3.9+)
+- **LLM Integration**: NVIDIA NIM (meta/llama-3.3-70b-instruct)
+- **ML Libraries**: scikit-learn, pandas, numpy
+- **Task Queue**: Celery + Redis
+- **Deployment**: Docker + Kubernetes-ready
+
+### Infrastructure
+- **Containerization**: Docker + Docker Compose
+- **Message Queue**: Redis
+- **Async Jobs**: Celery
+- **APIs**: NVIDIA NIM (free tier), Anthropic Claude (optional)
+
+## 🚀 Getting Started
 
 ### Prerequisites
-- **Node.js 18+** and npm
-- **Python 3.10+** (optional, for ML service)
-- **MySQL 8.0+** (for database)
 
-### 1. Copy Environment Configuration
+- Node.js >= 18.0.0
+- Python >= 3.9
+- Docker & Docker Compose
+- Redis
+- MySQL 8.0+
+- NVIDIA NIM API key (free tier: [https://build.nvidia.com](https://build.nvidia.com))
+
+### Quick Start
+
 ```bash
-cp .env.example .env
+# Clone repository
+git clone https://github.com/Aashish-po/study-buddy.git
+cd study-buddy
+
+# Setup with Docker Compose (recommended)
+docker-compose up -d
+
+# Verify services
+docker-compose ps
+
+# Frontend: http://localhost:3000 (Expo)
+# Backend API: http://localhost:4000
+# ML Service: http://localhost:8000
 ```
 
-Fill in `.env` with your credentials:
-```bash
-DATABASE_URL=mysql://user:password@localhost:3306/studybuddy
-OAUTH_SERVER_URL=https://your-oauth-provider.com
-VITE_APP_ID=your_app_id
-OWNER_OPEN_ID=your_owner_id
-NVIDIA_API_KEY=your_nvidia_api_key
-JWT_SECRET=$(openssl rand -hex 32)
-ML_SERVICE_URL=http://localhost:8000
-```
+### Manual Setup
 
-### 2. Install Dependencies
 ```bash
-npm install --ignore-scripts
-```
-
-### 3. Start Development Servers
-```bash
-# All three services concurrently:
+# 1. Backend Setup
+cd apps/backend
+npm install
+cp .env.example .env.local
+npm run db:migrate
 npm run dev
 
-# Or individually:
-npm run dev:server    # Express backend (port 3002)
-npm run dev:metro     # Expo frontend (port 8081)
-npm run dev:ml        # Python ML service (port 8000) - requires Python setup
+# 2. Frontend Setup (new terminal)
+cd apps/frontend
+npm install
+npx expo start
+
+# 3. ML Service Setup (new terminal)
+cd apps/ml-service
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env
+python -m uvicorn main:app --reload --port 8000
 ```
 
-### 4. Access the App
-- **Frontend**: http://localhost:8081
-- **Backend API**: http://localhost:3002
-- **ML Service**: http://localhost:8000 (if running)
+### Environment Variables
 
----
+#### Backend (`.env.local`)
+```env
+# Database
+DATABASE_URL=mysql://user:password@localhost:3306/studybuddy
+
+# JWT & Security
+JWT_SECRET=your_jwt_secret_key
+REFRESH_TOKEN_SECRET=your_refresh_secret
+
+# NVIDIA NIM (free tier)
+NVIDIA_NIM_API_KEY=your_key_from_build.nvidia.com
+NVIDIA_NIM_BASE_URL=https://integrate.api.nvidia.com/v1
+
+# Anthropic (optional)
+ANTHROPIC_API_KEY=sk-ant-...
+
+# Frontend
+FRONTEND_URL=http://localhost:3000
+```
+
+#### ML Service (`.env`)
+```env
+# NVIDIA NIM
+NVIDIA_NIM_API_KEY=your_key
+NVIDIA_NIM_BASE_URL=https://integrate.api.nvidia.com/v1
+
+# Redis (for Celery)
+REDIS_URL=redis://localhost:6379/0
+
+# Database (same as backend)
+DATABASE_URL=mysql://user:password@localhost:3306/studybuddy
+
+# Model Configuration
+MODEL_NAME=meta/llama-3.3-70b-instruct
+MODEL_MAX_TOKENS=2048
+```
 
 ## 📁 Project Structure
 
 ```
-├── app/                          # React Native app screens & navigation
-│   ├── (tabs)/                   # Main app tabs (chat, study-aids, etc)
-│   ├── oauth/                    # OAuth callback handling
-│   └── _layout.tsx              # Root layout with providers
-├── components/                   # Reusable React Native components
-├── server/                       # Express.js backend
-│   ├── _core/
-│   │   ├── index.ts             # Express app setup
-│   │   ├── trpc.ts              # tRPC configuration
-│   │   ├── mlService.ts         # ML service HTTP client
-│   │   ├── mlRouter.ts          # tRPC ML endpoints
-│   │   ├── auth.ts              # OAuth authentication
-│   │   ├── sentry.ts            # Error tracking setup
-│   │   └── rate-limiting.ts     # API rate limiting
-│   └── routers.ts               # tRPC route definitions
-├── lib/                          # Utilities & hooks
-│   ├── error-boundary.tsx       # Error recovery component
-│   ├── theme-provider.tsx       # Theme configuration
-│   ├── trpc.ts                  # tRPC client setup
-│   └── gamification.ts          # Achievement scoring
-├── ml-service/                   # Python ML microservice
-│   ├── app/
-│   │   ├── main.py              # FastAPI entry point
-│   │   ├── config.py            # Configuration
-│   │   ├── schemas.py           # Request/response models
-│   │   └── models/              # ML algorithms
-│   │       ├── recommendation.py     # Topic recommendations
-│   │       ├── knowledge_gap.py      # Knowledge gap detection
-│   │       ├── retention.py          # Retention prediction
-│   │       └── study_plan.py         # Study plan generation
-│   └── requirements.txt          # Python dependencies
-└── drizzle/                      # Database schema & migrations
-    └── schema.ts                 # MySQL table definitions
+study-buddy/
+├── apps/
+│   ├── frontend/                    # React Native/Expo
+│   │   ├── app/                     # App routing
+│   │   ├── components/              # Reusable components
+│   │   ├── screens/                 # Screen components
+│   │   ├── hooks/                   # Custom hooks
+│   │   └── lib/                     # API clients, utils
+│   │
+│   ├── backend/                     # Express.js API
+│   │   ├── src/
+│   │   │   ├── routes/              # API endpoints
+│   │   │   ├── controllers/         # Request handlers
+│   │   │   ├── services/            # Business logic
+│   │   │   ├── middleware/          # Auth, validation
+│   │   │   ├── schemas/             # Zod validators
+│   │   │   └── db/                  # Database setup
+│   │   └── prisma/                  # Database schema
+│   │
+│   └── ml-service/                  # FastAPI ML Service
+│       ├── app/
+│       │   ├── api/                 # API endpoints
+│       │   ├── ml/                  # ML models & logic
+│       │   ├── services/            # LLM integration
+│       │   └── db/                  # Database models
+│       └── requirements.txt
+│
+├── packages/
+│   ├── shared-types/                # TypeScript types
+│   └── utils/                       # Shared utilities
+│
+├── docker-compose.yml               # Development setup
+└── README.md
 ```
 
----
+## 🔧 Development
 
-## 🏗️ Architecture
+### Running Tests
 
-### Frontend Layer (React Native + Expo)
-```
-React Native App
-    ↓
-tRPC Client (type-safe RPC)
-    ↓
-HTTP/WebSocket
-```
-
-### Backend Layer (Express + tRPC)
-```
-HTTP Request
-    ↓
-Express Middleware (Helmet, Rate Limiting, Auth)
-    ↓
-tRPC Procedure
-    ↓
-Business Logic (routers)
-    ↓
-Database (MySQL) / External APIs (NVIDIA Llama LLM)
-```
-
-### ML Service (Python + FastAPI)
-```
-tRPC ML Router
-    ↓
-MLServiceClient (HTTP)
-    ↓
-FastAPI Service
-    ↓
-ML Models (scikit-learn, numpy, pandas)
-```
-
----
-
-## ✨ Key Features
-
-### 1. **AI Chat Tutor** 💬
-- Real-time conversation with AI tutor powered by **NVIDIA Llama 3.3 70B**
-- Alternative: **Google Gemma 3N** model available
-- Context-aware explanations
-- Adjustable difficulty levels (Beginner/Intermediate/Advanced)
-- Free API tier available at https://build.nvidia.com
-
-### 2. **Study Aids** 📖
-- **Flashcards** - Auto-generated from topics with explanations
-- **Quizzes** - Multiple-choice questions with answer evaluation
-- **Summaries** - Comprehensive study notes with key concepts
-- All generated by AI based on selected topic and difficulty
-
-### 3. **ML Analytics** 📊
-**Recommendations** - Personalized topic suggestions based on:
-- Performance history
-- Studied topics
-- Learning patterns
-- Topic prerequisites
-
-**Knowledge Gap Detection** - Identifies weak areas through:
-- Quiz performance analysis
-- Chat sentiment analysis
-- Multimodal learning signals
-
-**Retention Prediction** - Uses Ebbinghaus forgetting curve:
-- Calculates retention probability
-- Suggests optimal review dates
-- Tracks memory strength
-
-**Study Plans** - Generates exam prep schedules:
-- Day-by-day topic allocation
-- Time estimates per topic
-- Milestone tracking
-- Success probability calculation
-
-### 4. **Security & Production Ready** 🔒
-- **Helmet.js** - Security headers
-- **Rate Limiting** - 100 requests/15 min per IP
-- **Error Tracking** - Sentry integration (optional)
-- **Input Validation** - Zod schemas everywhere
-- **OAuth** - Secure user authentication
-- **HTTPS** - Enforced in production
-- **CORS** - Credential-aware cross-origin handling
-
-### 5. **Error Recovery** ⚡
-- Error Boundary component for app crashes
-- ML service fallback strategies
-- Graceful degradation when services unavailable
-- Detailed error logging to Sentry
-
----
-
-## 🔧 Configuration
-
-### Environment Variables (.env)
 ```bash
-# Database
-DATABASE_URL=mysql://...       # MySQL connection string
+# Backend tests
+npm -C apps/backend run test
 
-# OAuth / Authentication
-OAUTH_SERVER_URL=https://...    # OAuth provider URL
-VITE_APP_ID=...                 # Client ID
-OWNER_OPEN_ID=...               # Owner user ID
+# ML Service tests
+pytest apps/ml-service/
 
-# LLM (NVIDIA - Primary)
-NVIDIA_API_KEY=nvapi-...        # Get from https://build.nvidia.com
-
-# Legacy (Optional - for image generation & voice transcription)
-BUILT_IN_FORGE_API_URL=         # Manus Forge URL (optional)
-BUILT_IN_FORGE_API_KEY=         # Manus Forge key (optional)
-
-# ML Service
-ML_SERVICE_URL=http://localhost:8000
-
-# Security
-JWT_SECRET=...                  # 32+ char random secret (openssl rand -hex 32)
-SENTRY_DSN=...                  # Optional: error tracking
-
-# Optional Features
-ENABLE_ANALYTICS=true
-ENABLE_VOICE_INPUT=true
-ENABLE_CHAT_HISTORY=true
-ENABLE_OFFLINE_MODE=false
+# Frontend tests
+npm -C apps/frontend run test
 ```
 
-### Scripts
+### Code Quality
+
 ```bash
-npm run dev              # Start all three servers
-npm run dev:server      # Express backend only
-npm run dev:metro       # Expo frontend only
-npm run dev:ml          # Python ML service only
-npm run build           # Build for production
-npm run start           # Run production build
-npm run check           # TypeScript validation
-npm run lint            # ESLint check
-npm run test            # Run tests with vitest
-npm run db:push         # Database migrations
+# Lint all packages
+npm run lint
+
+# Format code
+npm run format
+
+# Type check
+npm run type-check
 ```
 
----
+### Database Operations
 
-## 🤖 AI Models
-
-### Primary: NVIDIA Llama 3.3 70B Instruct
-**Production Model** - Recommended for all use cases
-- **Provider**: NVIDIA
-- **Speed**: Fast (~1-2s/response)
-- **Cost**: Free tier includes 30,000 tokens/month
-- **Reasoning**: Excellent for tutoring scenarios
-- **Get Key**: https://build.nvidia.com/meta/llama-3-3-70b-instruct
-
-### Alternative: Google Gemma 3N 2B
-**Fast & Lightweight** - For resource-constrained environments
-- **Provider**: NVIDIA (via Google Gemma)
-- **Speed**: Very fast (~500ms/response)
-- **Size**: 2B parameters (lightweight)
-- **Cost**: Free tier available
-- **Use**: Mobile/offline scenarios
-
-### Legacy: Manus Forge (Optional)
-**Still Available** - For image generation & voice transcription
-- Can be configured if you have existing Manus Forge credits
-- Not required for core chat functionality
-
----
-
-## 🚀 Getting NVIDIA API Key
-
-### Step 1: Create Account
-1. Visit https://build.nvidia.com
-2. Sign up with email or login with GitHub/Google
-
-### Step 2: Get API Key
-1. Go to https://build.nvidia.com/meta/llama-3-3-70b-instruct
-2. Click "Get API Key" or visit settings
-3. Create new API key for "Llama 3.3 70B Instruct"
-
-### Step 3: Configure
 ```bash
-# Add to .env
-NVIDIA_API_KEY=nvapi-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# Run migrations (backend)
+npm -C apps/backend run db:migrate
 
-# Restart dev server
-npm run dev:server
+# Reset database
+npm -C apps/backend run db:reset
+
+# View database (Prisma Studio)
+npm -C apps/backend run db:studio
 ```
 
-### Step 4: Verify Setup
-Test the API:
+## 🎓 API Examples
+
+### Generate Study Questions
+
 ```bash
-curl -X POST http://localhost:3002/api/chat/sendMessage \
+curl -X POST http://localhost:4000/api/study/generate-questions \
+  -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"message":"Hello, how can I learn better?","topic":"Study Tips"}'
+  -d '{
+    "topic": "Photosynthesis",
+    "difficulty": "intermediate",
+    "count": 5
+  }'
 ```
 
----
+### Get Adaptive Recommendations
 
-## 🐍 Python ML Service Setup
-
-### Install Python Dependencies
 ```bash
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # macOS/Linux
-# or: venv\Scripts\activate  # Windows
-
-# Install packages
-pip install -r ml-service/requirements.txt
+curl -X GET "http://localhost:4000/api/recommendations?userId=user_123" \
+  -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
-### Run ML Service
+### Submit Answer for Analysis
+
 ```bash
-# Development (with auto-reload)
-python -m uvicorn app.main:app --reload --port 8000
-
-# Or use npm script (requires Python setup above)
-npm run dev:ml
-```
-
-### ML Service Endpoints
-```bash
-# Health check
-curl http://localhost:8000/api/ml/health
-
-# Get topic recommendations
-curl -X POST http://localhost:8000/api/ml/recommend \
+curl -X POST http://localhost:4000/api/study/submit-answer \
+  -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"userId":"user123","studiedTopics":["Algebra"],"performanceHistory":[]}'
+  -d '{
+    "questionId": "q_456",
+    "answer": "Photosynthesis converts light energy to chemical energy",
+    "explanation": true
+  }'
+```
 
-# Analyze knowledge gaps
-curl -X POST http://localhost:8000/api/ml/knowledge-gaps \
+### ML Service - Get Content Summary
+
+```bash
+curl -X POST http://localhost:8000/api/summarize \
   -H "Content-Type: application/json" \
-  -d '{"userId":"user123","quizResults":[],"chatInteractions":[]}'
-
-# Predict retention (spaced repetition)
-curl -X POST http://localhost:8000/api/ml/predict-retention \
-  -H "Content-Type: application/json" \
-  -d '{"topic":"Algebra","lastStudied":"2024-01-10","reviewCount":2,"averageScore":85}'
-
-# Generate study plan
-curl -X POST http://localhost:8000/api/ml/study-plan \
-  -H "Content-Type: application/json" \
-  -d '{"userId":"user123","examDate":"2024-02-15","topics":["Algebra"],"hoursPerDay":3,"currentMastery":{"Algebra":65}}'
+  -d '{
+    "content": "Long text content here...",
+    "max_length": 150
+  }'
 ```
 
----
+## 📊 Architecture
 
-## 🗄️ Database Setup
-
-### Initialize Database
-```bash
-# Generate Drizzle migrations
-drizzle-kit generate
-
-# Run migrations
-drizzle-kit migrate
-
-# Or use npm script
-npm run db:push
 ```
-
-### Database Schema
-Key tables in `drizzle/schema.ts`:
-- `users` - User accounts with OAuth IDs
-- `progress` - Quiz/chat interaction history
-- `study_sessions` - Learning session records
-- `flashcards` - Generated study materials
-
-See `server/README.md` for detailed schema documentation.
-
----
-
-## 🧪 Testing
-
-### Run Tests
-```bash
-npm run test                # Run all tests
-npm run test -- --coverage  # Coverage report
+┌──────────────────────────────────┐
+│   React Native / Expo Frontend   │
+│   (iOS, Android, Web)            │
+└────────────────┬─────────────────┘
+                 │
+         ┌───────▼────────┐
+         │  Expo / Metro  │
+         │   Development  │
+         └────────────────┘
+                 │
+    ┌────────────┼────────────┐
+    │            │            │
+REST API     Socket.io    GraphQL
+    │            │            │
+┌───▼────────────▼────────────▼──┐
+│   Express.js API Server        │
+│   (tRPC + TypeScript)          │
+├────────────────────────────────┤
+│  ┌──────────────────────────┐  │
+│  │ Auth & Session           │  │
+│  │ Course Management        │  │
+│  │ Quiz & Progress          │  │
+│  │ Recommendation Engine    │  │
+│  └──────────────────────────┘  │
+└────────┬───────────────┬────────┘
+         │               │
+    ┌────▼──────┐   ┌────▼──────────────┐
+    │  MySQL    │   │ FastAPI ML Service │
+    │  Database │   │ ┌────────────────┐ │
+    │           │   │ │NVIDIA NIM LLM  │ │
+    └───────────┘   │ │(Llama 3.3 70B) │ │
+                    │ ├────────────────┤ │
+                    │ │ ML Models      │ │
+                    │ │ Analytics      │ │
+                    │ └────────────────┘ │
+                    └────────────────────┘
 ```
-
-### Test Files
-- `hooks/__tests__/use-study-data.test.ts` - Hook tests
-- `tests/auth.logout.test.ts` - Auth integration tests
-
----
-
-## 📦 Production Deployment
-
-### Pre-Deployment Checklist
-```bash
-npm run check      # TypeScript validation
-npm run lint       # Code quality
-npm run test       # All tests passing
-```
-
-### Build for Production
-```bash
-npm run build      # Creates dist/ folder
-
-# For mobile platforms:
-eas build --platform ios --profile production
-eas build --platform android --profile production
-```
-
-### Deploy Backend
-```bash
-# Set production environment
-NODE_ENV=production
-
-# Run the built server
-npm run start       # Port 3000 (or first available)
-```
-
-### Deploy ML Service (Docker)
-```bash
-cd ml-service
-docker build -t studybuddy-ml .
-docker run -p 8000:8000 studybuddy-ml
-```
-
-See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed instructions.
-
----
-
-## 🔐 Security Features
-
-### Built-In
-✅ **Helmet.js** - Security headers (CSP, HSTS, etc)  
-✅ **Rate Limiting** - 100 requests per 15 minutes  
-✅ **CORS** - Credential-aware cross-origin support  
-✅ **Input Validation** - Zod schemas on all inputs  
-✅ **OAuth** - Secure user authentication  
-✅ **Error Boundary** - App crash recovery  
-
-### Optional
-🔹 **Sentry** - Error tracking (configure SENTRY_DSN)  
-🔹 **HTTPS** - Enforced in production  
-🔹 **Database Encryption** - Use encrypted connections  
-
----
-
-## 📊 Monitoring & Debugging
-
-### Server Logs
-```bash
-# Check backend logs
-npm run dev:server      # See real-time logs
-
-# For production
-NODE_ENV=production npm run start  # Logs to console
-```
-
-### Error Tracking (Sentry)
-1. Create account at https://sentry.io
-2. Create project for Node.js
-3. Add `SENTRY_DSN` to `.env`
-4. Errors automatically tracked
-
-### ML Service Logs
-```bash
-npm run dev:ml          # See model operations
-
-# Production
-python -m uvicorn app.main:app --port 8000
-```
-
----
-
-## 🎮 Using the App
-
-### As a Student
-1. **Authenticate** via OAuth
-2. **Chat with Tutor** - Ask questions about topics
-3. **Generate Study Aids** - Create flashcards/quizzes
-4. **View Analytics** - Check knowledge gaps
-5. **Get Study Plan** - Prepare for exams
-
-### As an Admin
-1. Monitor user performance
-2. Configure LLM settings
-3. Manage study content
-4. View system analytics
-
----
-
-## 🤝 Contributing
-
-### Code Standards
-- **TypeScript** required for all `.ts`/`.tsx` files
-- **ESLint** enforced: `npm run lint`
-- **Prettier** formatting: `npm run format`
-- **tRPC** for all API communication
-
-### Workflow
-1. Create feature branch
-2. Implement changes
-3. Run `npm run check` & `npm run test`
-4. Submit pull request
-5. Deploy via `eas` (for mobile) or Docker (for backend)
-
----
-
-## 📚 Documentation
-
-- [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Step-by-step deployment
-- [QUICK_REFERENCE.md](./QUICK_REFERENCE.md) - Fast reference guide
-- [README_PRODUCTION.md](./README_PRODUCTION.md) - Production setup details
-- [PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md) - Pre-launch checklist
-- [ml-service/README.md](./ml-service/README.md) - ML service documentation
-- [server/README.md](./server/README.md) - Backend API documentation
-- [PRIVACY.md](./PRIVACY.md) - Privacy policy
-- [TERMS_OF_SERVICE.md](./TERMS_OF_SERVICE.md) - Terms of service
-
----
 
 ## 🐛 Troubleshooting
 
-### Port Already in Use
+### NVIDIA NIM Connection Error
 ```bash
-# Find process using port
-lsof -i :3000
-
-# Kill it
-kill -9 <PID>
-
-# Or use different port
-PORT=3001 npm run start
+# Verify API key and base URL
+curl -X GET https://integrate.api.nvidia.com/v1/models \
+  -H "Authorization: Bearer YOUR_NVIDIA_NIM_KEY"
 ```
 
-### Database Connection Failed
+### Database Connection Issues
 ```bash
-# Verify MySQL is running
-mysql -h localhost -u user -p
+# Check MySQL is running
+mysql -u user -p -h localhost
 
-# Check DATABASE_URL in .env
-cat .env | grep DATABASE_URL
-
-# Make sure MySQL accepts your connection
-mysql -h localhost -u user -ppassword -e "SELECT 1"
+# Verify DATABASE_URL format
+# mysql://user:password@host:3306/dbname
 ```
 
-### Python ML Service Not Starting
+### ML Service Not Responding
 ```bash
-# Check Python installation
-python --version  # Should be 3.10+
+# Check FastAPI service is running
+curl http://localhost:8000/health
 
-# Install dependencies
-pip install -r ml-service/requirements.txt
-
-# Try running with full output
-python -m uvicorn app.main:app --log-level debug
+# View service logs
+docker logs study-buddy-ml-service
 ```
 
-### tRPC Type Errors
+### Redis Connection Problem
 ```bash
-# Verify TypeScript setup
-npm run check
+# Test Redis connection
+redis-cli ping
 
-# If errors persist, update dependencies
-npm install
+# Should return: PONG
 ```
 
----
+## 🚀 Deployment
 
-## 📞 Support
+### Docker Deployment
 
-- **Issues**: Open GitHub issues for bugs
-- **Documentation**: Check docs/ folder
-- **Email**: support@studybuddy.ai
-- **Discord**: [Join community](#)
+```bash
+# Build all services
+docker-compose build
 
----
+# Start services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+### Kubernetes Deployment
+
+```bash
+# Build images
+docker build -f Dockerfile.backend -t study-buddy-backend:latest .
+docker build -f Dockerfile.ml -t study-buddy-ml:latest .
+
+# Push to registry
+docker push your-registry/study-buddy-backend:latest
+docker push your-registry/study-buddy-ml:latest
+
+# Deploy with Helm
+helm install study-buddy ./helm
+```
+
+## 📚 Documentation
+
+- [Architecture Guide](./docs/ARCHITECTURE.md)
+- [ML Model Training](./docs/ML_TRAINING.md)
+- [API Reference](./docs/API.md)
+- [Deployment Guide](./docs/DEPLOYMENT.md)
+
+## 🤝 Contributing
+
+Contributions are welcome! See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## 📄 License
 
-Licensed under MIT License - see LICENSE file
+MIT License — see [LICENSE](./LICENSE) for details.
 
----
+## 🙋 Support
+
+- **Issues**: [GitHub Issues](https://github.com/Aashish-po/study-buddy/issues)
+- **Email**: poudelashish572@gmail.com
+- **Discussions**: [GitHub Discussions](https://github.com/Aashish-po/study-buddy/discussions)
+
+## 🔮 Roadmap
+
+- [ ] Multi-language support (Nepali, Hindi, etc.)
+- [ ] Advanced ML-powered learning path optimization
+- [ ] Collaborative study groups
+- [ ] Gamification (badges, leaderboards)
+- [ ] Mobile offline mode with sync
+- [ ] Real-time peer tutoring
+- [ ] Voice-based learning interface
 
 ## 🙏 Acknowledgments
 
-- **NVIDIA** - Llama 3.3 70B & platform for AI inference
-- **Meta** - Llama 3.3 model
-- **Google** - Gemma 2/3 models
-- **OpenAI** - OpenAI API specification (used by NVIDIA)
-- **Manus Forge** - Legacy LLM support for image generation & transcription
-- **Expo** - React Native development platform
-- **FastAPI** - Python web framework
-- **tRPC** - TypeScript RPC framework
-- **Drizzle ORM** - Database toolkit
+- **NVIDIA NIM** for free open-source LLM inference
+- **Anthropic** for Claude API (optional)
+- **React Native/Expo** community
+- Contributors and users
 
 ---
 
-**Built with ❤️ for learners everywhere**
+**Built with ❤️ by [Aashish Paudel](https://github.com/Aashish-po)**
 
-Last Updated: April 7, 2026
+*AI-Powered Education | Open Source | MIT License*
